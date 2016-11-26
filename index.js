@@ -118,8 +118,10 @@ function drawArrows(cx, m, l, sq_dim) {
   }
 }
 
-var ctx = document.getElementById("myCanvas").getContext("2d");
-ctx.lineWidth = 1;
-ctx.strokeStyle = 'black';
-drawArrows(ctx, matrixDemo, lines, dim)
-
+function test() {
+	"use strict";
+	var ctx = document.getElementById("myCanvas").getContext("2d");
+	ctx.lineWidth = 1;
+	ctx.strokeStyle = 'black';
+	drawArrows(ctx, matrixDemo, lines, dim)
+}
