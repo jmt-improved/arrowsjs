@@ -35,10 +35,15 @@ var lines = [
     [[2,3],[3,0]]
 ];
 
+var links = [
+    [[0,1],[1,0]],
+    [[1,3],[1,0]]
+];
+
 var matrixDemo = [
     [-1,-1,[1],-1],
     [-1,-1,[1],-1],
-    [[1],[1],[1],[2]],
+    [[1, 2],[1],[1],[2]],
     [[2],[2],[2],[2]],
 ];
 
@@ -55,6 +60,61 @@ var matrixDemo3 = [
     [[1],[1],[1,2],[2]],
     [[2],[2],[2],[2]],
 ];
+
+var complexMatrix = [
+    [-1,-1,0,-1, 0, 0, 0],
+    [-1,-1,0,-1, 0, 0, 0],
+    [0,0,0,0, 0, 0, 0],
+    [0,0,0,0, 0, 0, 0],
+    [0,0,0,0, 0, 0, 0],
+    [0,0,0,0, 0, 0, 0],
+    [0,0,0,0, 0, 0, 0],
+    [0,0,0,0, 0, 0, 0],
+];
+
+var complexMatrixSolved = [ 
+  [ -1, -1, 0, -1,              [ 1 ], 0, 0 ],
+  [ -1, -1, 0, -1,              [ 1 ], 0, 0 ],
+  [ 0, 0, 0,             [ 2 ], [ 1 ], 0, 0 ],
+  [ [ 2 ], [ 2 ], [ 2 ], [ 2 ], [ 1 ], 0, 0 ],
+  [ 0, 0, 0, 0,                 [ 1 ], 0, 0 ],
+  [ 0, 0, 0, 0,                 [ 1 ], 0, 0 ],
+  [ [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], 0, 0 ],
+  [ 0, 0, 0, 0, 0, 0, 0 ]
+];
+
+var complexLines = [
+    [[0,4],[6,0]],
+    [[2,3],[3,0]]
+];
+
+var complexLinks = [
+    [[0,3],[6,0]],
+    [[1,3],[3,0]]
+];
+
+var complexMatrixSolved2 = [ 
+  [ -1, -1, 0, -1, [ 1 ], 0, 0 ],
+  [ -1, -1, 0, -1, [ 1 ], 0, 0 ],
+  [ [ 1 ], [ 2 ], [ 2 ], [ 2 ], [ 1 ], 0, 0 ],
+  [ [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], 0, 0 ],
+  [ 0, 0, 0, 0, 0, 0, 0 ],
+  [ 0, 0, 0, 0, 0, 0, 0 ],
+  [ 0, 0, 0, 0, 0, 0, 0 ],
+  [ 0, 0, 0, 0, 0, 0, 0 ] 
+];
+
+var complexLines2 = [
+    [[0,4],[2,0]],
+    [[2,3],[2,1]]
+];
+
+var complexLinks2 = [
+    [[0,3],[1,0]],
+    [[1,3],[1,1]]
+];
+
+
 
 function isNeighborAConnectedComponent(m, p, l, ii, jj, i, j, t) {
   "use strict";
@@ -79,10 +139,10 @@ function drawArrows(cx, m, p, l, sq_dim) {
                    [sq_dim, sq_dim / 2],  // RIGHT
                    [sq_dim / 2, sq_dim]]; // BOTTOM
   var i, j, k, t, moved, ii, jj, tmp_x, tmp_xx, tmp_y, tmp_yy;
+  
   for (i = 0; i < m.length; i++) {
     for (j = 0; j < m[i].length; j++) {
       if (m[i][j] == -1) {
-          cx.fillStyle = "red";
           cx.fillRect(j * sq_dim, i * sq_dim, sq_dim, sq_dim);
       }
       else if (typeof(m[i][j]) == "object") {
@@ -129,9 +189,11 @@ function drawArrows(cx, m, p, l, sq_dim) {
 }
 
 function test() {
-	"use strict";
-	var ctx = document.getElementById("myCanvas").getContext("2d");
-	ctx.lineWidth = 1;
-	ctx.strokeStyle = 'black';
-	drawArrows(ctx, matrixDemo, lines, dim)
+  "use strict";
+  var ctx = document.getElementById("myCanvas").getContext("2d");
+  ctx.lineWidth = 1;
+  ctx.fillStyle = "red";
+  ctx.strokeStyle = 'black';
+  drawArrows(ctx, complexMatrixSolved2, complexLines2, complexLinks2, dim)
 }
+
