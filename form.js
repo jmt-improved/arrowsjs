@@ -108,7 +108,10 @@ $("document").ready(function() {
         var connectionsShape = [nConnections, 2];
         var connections = buildConnections(connectionsShape)
 
+        var t0 = new Date().getTime();
         var solved = bestMatrix(matrix, lines);
+        var t1 = new Date().getTime();
+        console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");*/
 
         var myCanvas = document.getElementById("myCanvas");
         var ctx = myCanvas.getContext("2d");
