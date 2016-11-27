@@ -1,0 +1,21 @@
+.components, .lines, .connections {
+  padding: 5px 0px;
+}
+
+.lineRow, .connRow {
+  display: table;
+}
+
+.lineRow > div, .connRow > div {
+  padding: 0px 5px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.compRow {
+  padding: 5px 0px;
+}
+
+.compRow > input {
+  margin-right: 5px
+}

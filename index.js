@@ -1,207 +1,492 @@
 // Warn if overriding existing method
-if(Array.prototype.equals)
+if (Array.prototype.equals)
     console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
 // attach the .equals method to Array's prototype to call it on any array
-Array.prototype.equals = function (array) {
+Array.prototype.equals = function(array) {
     // if the other array is a falsy value, return
     if (!array)
         return false;
 
-    // compare lengths - can save a lot of time 
+    // compare lengths - can save a lot of time
     if (this.length != array.length)
         return false;
 
-    for (var i = 0, l=this.length; i < l; i++) {
+    for (var i = 0, l = this.length; i < l; i++) {
         // Check if we have nested arrays
         if (this[i] instanceof Array && array[i] instanceof Array) {
             // recurse into the nested arrays
             if (!this[i].equals(array[i]))
-                return false;       
-        }           
-        else if (this[i] != array[i]) { 
+                return false;
+        } else if (this[i] != array[i]) {
             // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;   
-        }           
-    }       
+            return false;
+        }
+    }
     return true;
-}
+};
 // Hide method from for-in loops
-Object.defineProperty(Array.prototype, "equals", {enumerable: false});
-
-dim = 40
-
-var lines = [
-    [[0,2],[2,0]],
-    [[2,3],[3,0]]
-];
-
-var links = [
-    [[0,1],[1,0]],
-    [[1,3],[1,0]]
-];
-
-var matrixDemo = [
-    [-1,-1,[1],-1],
-    [-1,-1,[1],-1],
-    [[1, 2],[1],[1],[2]],
-    [[2],[2],[2],[2]],
-];
-
-var matrixDemo2 = [
-    [-1,-1,[1],-1],
-    [-1,-1,[1],-1],
-    [[1],[1],[1,2],[2]],
-    [[2],[2],[2],0],
-];
-
-var matrixDemo3 = [
-    [-1,-1,[1],-1],
-    [-1,-1,[1],-1],
-    [[1],[1],[1,2],[2]],
-    [[2],[2],[2],[2]],
-];
-
-var complexMatrix = [
-    [-1,-1,0,-1, 0, 0, 0],
-    [-1,-1,0,-1, 0, 0, 0],
-    [0,0,0,0, 0, 0, 0],
-    [0,0,0,0, 0, 0, 0],
-    [0,0,0,0, 0, 0, 0],
-    [0,0,0,0, 0, 0, 0],
-    [0,0,0,0, 0, 0, 0],
-    [0,0,0,0, 0, 0, 0],
-];
-
-var complexMatrixSolved = [ 
-  [ -1, -1, 0, -1,              [ 1 ], 0, 0 ],
-  [ -1, -1, 0, -1,              [ 1 ], 0, 0 ],
-  [ 0, 0, 0,             [ 2 ], [ 1 ], 0, 0 ],
-  [ [ 2 ], [ 2 ], [ 2 ], [ 2 ], [ 1 ], 0, 0 ],
-  [ 0, 0, 0, 0,                 [ 1 ], 0, 0 ],
-  [ 0, 0, 0, 0,                 [ 1 ], 0, 0 ],
-  [ [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0 ]
-];
-
-var complexLines = [
-    [[0,4],[6,0]],
-    [[2,3],[3,0]]
-];
-
-var complexLinks = [
-    [[0,3],[6,0]],
-    [[1,3],[3,0]]
-];
-
-var complexMatrixSolved2 = [ 
-  [ -1, -1, 0, -1, [ 1 ], 0, 0 ],
-  [ -1, -1, 0, -1, [ 1 ], 0, 0 ],
-  [ [ 1 ], [ 2 ], [ 2 ], [ 2 ], [ 1 ], 0, 0 ],
-  [ [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0 ] 
-];
-
-var complexLines2 = [
-    [[0,4],[2,0]],
-    [[2,3],[2,1]]
-];
-
-var complexLinks2 = [
-    [[0,3],[1,0]],
-    [[1,3],[1,1]]
-];
-
-
+Object.defineProperty(Array.prototype, "equals", {
+    enumerable: false
+});
 
 function isNeighborAConnectedComponent(m, p, l, ii, jj, i, j, t) {
-  "use strict";
-  return ((m[ii][jj] == -1) && (l[m[i][j][t] - 1][0].equals([ii, jj])) || 
-                    l[m[i][j][t] - 1][1].equals([ii, jj]))
-} 
+    "use strict";
+    return ((m[ii][jj] == -1) && (l[m[i][j][t] - 1][0].equals([ii, jj])) ||
+        l[m[i][j][t] - 1][1].equals([ii, jj]));
+}
 
 function isLineContinued(m, ii, jj, i, j, t) {
-  "use strict";
-  return (typeof(m[ii][jj]) == "object" && 
-                    (m[ii][jj].indexOf(m[i][j][t]) != -1))
+    "use strict";
+    return (typeof(m[ii][jj]) == "object" &&
+        (m[ii][jj].indexOf(m[i][j][t]) != -1));
 }
 
 function drawArrows(cx, m, p, l, sq_dim) {
-  "use strict";
-  var neighbors = [[-1, 0], // TOP
-                   [0, -1], // LEFT
-                   [0, 1],  // RIGHT 
-                   [1, 0]]; // BOTTOM
-  var n_formula = [[sq_dim / 2, 0],       // TOP
-                   [0, sq_dim / 2],       // LEFT
-                   [sq_dim, sq_dim / 2],  // RIGHT
-                   [sq_dim / 2, sq_dim]]; // BOTTOM
-  var i, j, k, t, moved, ii, jj, tmp_x, tmp_xx, tmp_y, tmp_yy;
-  
-  for (i = 0; i < m.length; i++) {
-    for (j = 0; j < m[i].length; j++) {
-      if (m[i][j] == -1) {
-        // Draw component
-        cx.fillRect(j * sq_dim, i * sq_dim, sq_dim, sq_dim);
-      }
-      else if (typeof(m[i][j]) == "object") {
-        // We found an array that describes a segment of one or more lines
-        for (t = 0; t < m[i][j].length; t++) {
-          if (m[i][j][t] > 0) {
-            moved = false;
-            cx.beginPath();
-            // We look for neighbors of this cell
-            for (k = 0; k < 4; k++) {
-              ii = i + neighbors[k][0];
-              jj = j + neighbors[k][1];
-              if (m[ii] !== undefined && m[ii][jj] !== undefined) {
-                // A line can be either continued to a neighbor cell or connected to a component
-                if (isNeighborAConnectedComponent(m, p, l, ii, jj, i, j, t) || 
-                    isLineContinued(m, ii, jj, i, j, t)) {
-                  if (!moved) {
-                    // Start point in this cell
-                    tmp_x = j * sq_dim + n_formula[k][0]
-                    tmp_y = i * sq_dim + n_formula[k][1]
-                    cx.moveTo(tmp_x , tmp_y);
-                    moved = true;
-                  } else {
-                    // End point in this cell
-                    tmp_xx = j * sq_dim + n_formula[k][0]
-                    tmp_yy = i * sq_dim + n_formula[k][1]
-                    if ((tmp_x !== tmp_xx) && (tmp_y !== tmp_yy)) {
-                      // The line will be diagonal 
-                      // Draw a 90° corner to connect start and end point
-                      if (k == 1) {
-                        cx.lineTo(tmp_x, tmp_yy);      
-                      }
-                      else if (k == 2) {
-                        cx.lineTo(tmp_x, tmp_yy);
-                      }
-                      else if (k == 3) {
-                        cx.lineTo(tmp_xx, tmp_y);
-                      }
+    "use strict";
+    var neighbors = [
+        [-1, 0], // TOP
+        [0, -1], // LEFT
+        [0, 1], // RIGHT
+        [1, 0]
+    ]; // BOTTOM
+    var n_formula = [
+        [sq_dim / 2, 0], // TOP
+        [0, sq_dim / 2], // LEFT
+        [sq_dim, sq_dim / 2], // RIGHT
+        [sq_dim / 2, sq_dim]
+    ]; // BOTTOM
+    var i, j, k, t, moved, ii, jj, tmp_x, tmp_xx, tmp_y, tmp_yy;
+
+    for (i = 0; i < m.length; i++) {
+        for (j = 0; j < m[i].length; j++) {
+            if (m[i][j] == -1) {
+                // Draw component
+                cx.fillRect(j * sq_dim, i * sq_dim, sq_dim, sq_dim);
+            } else if (typeof(m[i][j]) == "object") {
+                // We found an array that describes a segment of one or more lines
+                for (t = 0; t < m[i][j].length; t++) {
+                    if (m[i][j][t] > 0) {
+                        moved = false;
+                        cx.beginPath();
+                        // We look for neighbors of this cell
+                        for (k = 0; k < 4; k++) {
+                            ii = i + neighbors[k][0];
+                            jj = j + neighbors[k][1];
+                            if (m[ii] !== undefined && m[ii][jj] !== undefined) {
+                                // A line can be either continued to a neighbor cell or connected to a component
+                                if (isNeighborAConnectedComponent(m, p, l, ii, jj, i, j, t) ||
+                                    isLineContinued(m, ii, jj, i, j, t)) {
+                                    if (!moved) {
+                                        // Start point in this cell
+                                        tmp_x = j * sq_dim + n_formula[k][0];
+                                        tmp_y = i * sq_dim + n_formula[k][1];
+                                        cx.moveTo(tmp_x, tmp_y);
+                                        moved = true;
+                                    } else {
+                                        // End point in this cell
+                                        tmp_xx = j * sq_dim + n_formula[k][0];
+                                        tmp_yy = i * sq_dim + n_formula[k][1];
+                                        if ((tmp_x !== tmp_xx) && (tmp_y !== tmp_yy)) {
+                                            // The line will be diagonal
+                                            // Draw a 90° corner to connect start and end point
+                                            if (k == 1) {
+                                                cx.lineTo(tmp_x, tmp_yy);
+                                            } else if (k == 2) {
+                                                cx.lineTo(tmp_x, tmp_yy);
+                                            } else if (k == 3) {
+                                                cx.lineTo(tmp_xx, tmp_y);
+                                            }
+                                        }
+                                        cx.lineTo(tmp_xx, tmp_yy);
+                                    }
+                                }
+                            }
+                        }
+                        cx.stroke();
                     }
-                    cx.lineTo(tmp_xx, tmp_yy);
-                  }
                 }
-              }
             }
-            cx.stroke();
-          }
         }
-      }
     }
-  }
 }
 
 function test() {
-  "use strict";
-  var ctx = document.getElementById("myCanvas").getContext("2d");
-  ctx.lineWidth = 1;
-  ctx.fillStyle = "red";
-  ctx.strokeStyle = 'black';
-  drawArrows(ctx, complexMatrixSolved2, complexLines2, complexLinks2, dim)
+    "use strict";
+    var ctx = document.getElementById("myCanvas").getContext("2d");
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "red";
+    ctx.strokeStyle = 'black';
+    drawArrows(ctx, complexMatrixSolved2, complexLines2, complexLinks2, dim);
 }
 
+/**
+ * Created by claudio on 26/11/16.
+ */
+
+Array.prototype.isValidPoint = function(x, y) {
+    "use strict";
+    let obj = this[x];
+    if (obj == undefined)
+        return false;
+    obj = obj[y];
+    if (obj == undefined)
+        return false;
+    return true;
+};
+Array.prototype.mergeMatrix = function(matrix) {
+    "use strict";
+    return this.map((value, pos) => value.map((value2, pos2) => {
+        let valueM = matrix[pos][pos2];
+        if (!Array.isArray(value2)) {
+            if (value2 == -1)
+                return -1;
+            if (!Array.isArray(valueM))
+                return 0;
+
+            return valueM;
+        }
+        if (!Array.isArray(valueM))
+            return value2;
+        return value2.concat(matrix[pos][pos2]);
+    }));
+};
+
+Object.prototype.search = function(x, y, value) {
+    "use strict";
+    let obj = this;
+    if (!Array.isArray(obj))
+        return false;
+    if (!this.isValidPoint(x, y))
+        return false;
+    obj = obj[x][y];
+    if (!Array.isArray(obj))
+        return false;
+    let ret = obj.indexOf(value);
+    return ret >= 0;
+};
+
+Object.prototype.clone = function() {
+    "use strict";
+    return JSON.parse(JSON.stringify(this));
+};
+
+Math.randBounds = function(low, upper) {
+    "use strict";
+    let rnd = Math.random();
+    rnd *= upper - low + 1; //+1 to reach the upper bound
+    rnd = Math.floor(rnd);
+    if (rnd > upper) //to fix the case where random returns exactly 1
+        rnd = upper;
+    rnd += low;
+    return rnd;
+};
+
+Array.newWithElement = function(size, element) {
+    "use strict";
+    let ret = [];
+    for (let i = 0; i < size; i++)
+        ret.push(element);
+    return ret;
+};
+
+// CONFIG
+const LENGTH_SCORE = 1;
+const ANGLE_SCORE = 5;
+const OVERLAPPING_SCORE = 30;
+const RIGHT_CONSTRAINT = true; //the arrows cannot come back in the horizontal line (if I start from the right side I can go only to left)
+const ALLOW_TWO_ANGLES = true; //allow to have two near angles, in the case this bring to go to the original direction
+/*
+ * BEST CONFIG for performance
+ * RIGHT_CONSTRAINT = true;
+ * ALLOW_TWO_ANGLES = false;
+ */
+
+
+function bestMatrix(matrix, lines) {
+    "use strict";
+    let score = 1000000;
+    let ret = [];
+    allMatrices(matrix, lines)
+        .forEach((value) => {
+            let tmpScore = calculateScore(value);
+            if (tmpScore < score) {
+                score = tmpScore;
+                ret = value;
+            }
+        });
+    console.log(score);
+    return ret;
+}
+
+
+function allMatrices(matrix, lines) {
+    "use strict";
+    let matrices = lines.map((line, pos) => findMatricesOfLine(matrix, lines, pos + 1));
+    let combinations = getCombinations(matrices);
+    return combinations;
+}
+
+function getCombinations(matrices, choosen, level) {
+    "use strict";
+    level = level || 0;
+    let combinations = [];
+    choosen = choosen || Array.newWithElement(matrices.length, -1);
+    let firstElement = 0;
+    for (; choosen[firstElement] != -1 && firstElement < choosen.length; firstElement++);
+    //console.log(level, firstElement, choosen);
+    if (firstElement == choosen.length && choosen[firstElement] != -1) {
+        return [choosen.reduce((a, b, pos) => a.mergeMatrix(matrices[pos][b]), matrices[choosen.length - 1][choosen.pop()])]; //remove last
+    }
+
+    matrices[firstElement]
+        .forEach((value, pos) => {
+            let tmpChosen = choosen.clone();
+            tmpChosen[firstElement] = pos;
+            combinations = combinations.concat(getCombinations(matrices, tmpChosen, level + 1));
+        });
+    return combinations;
+}
+
+
+
+function findMatricesOfLine(matrix, lines, pos) {
+    "use strict";
+    var x = lines[pos - 1][0][0];
+    var y = lines[pos - 1][0][1];
+    matrix = matrix.clone();
+    matrix[x][y] = [pos];
+    return allPaths(matrix, lines[pos - 1], x, y, pos, 0, lines[pos - 1][0][1] < lines[pos - 1][1][1]);
+}
+
+
+function calculateScore(matrix) {
+    "use strict";
+    let score = 0;
+    for (let valueIndex = 0; valueIndex < matrix.length; valueIndex++) {
+        let value = matrix[valueIndex];
+        for (let value2Index = 0; value2Index < value.length; value2Index++) {
+            let value2 = value[value2Index];
+            if (!Array.isArray(value2))
+                continue;
+            score += (value2.length - 1) * OVERLAPPING_SCORE;
+            score += value2.length * LENGTH_SCORE;
+            score += calculateAnglesNumber(matrix, valueIndex, value2Index) * ANGLE_SCORE;
+        }
+    }
+    return score;
+}
+
+function calculateAnglesNumber(matrix, x, y) {
+    "use strict";
+    let values = matrix[x][y];
+    return values.filter(value => {
+        if ((matrix.search(x - 1, y, value) && matrix.search(x, y + 1, value)) ||
+            (matrix.search(x - 1, y, value) && matrix.search(x, y - 1, value)) ||
+            (matrix.search(x + 1, y, value) && matrix.search(x, y + 1, value)) ||
+            (matrix.search(x + 1, y, value) && matrix.search(x, y - 1, value)))
+            return true;
+        return false;
+    }).length;
+}
+
+
+function allPaths(matrix, line, x, y, value, level, right, angleInfo) {
+    "use strict";
+    //level = level || 0;
+    var matrices = [];
+    angleInfo = angleInfo || {
+        direction: 0,
+        turned: 0,
+        previousDirection: 0,
+        previousPreviousDirection: 0
+    };
+
+    if (x == line[1][0] && y == line[1][1])
+        return [matrix];
+
+    //break if I have two parallel lines? without blank?
+    if (angleInfo.turned >= 2 && (!ALLOW_TWO_ANGLES || (angleInfo.direction != angleInfo.previousPreviousDirection && angleInfo.previousPreviousDirection != 0)))
+        return [];
+
+
+    //recursion
+    var end = false;
+
+    if (matrix.isValidPoint(x + 1, y) && matrix[x + 1][y] == 0) {
+        let tmpMatrix = matrix.clone();
+        tmpMatrix[x + 1][y] = [value];
+        let tmpAngleInfo = angleInfo.clone();
+        tmpAngleInfo.previousPreviousDirection = tmpAngleInfo.previousDirection;
+        tmpAngleInfo.previousDirection = tmpAngleInfo.direction;
+        tmpAngleInfo.direction = 1;
+        if (tmpAngleInfo.direction != angleInfo.direction)
+            tmpAngleInfo.turned++;
+        else
+            tmpAngleInfo.turned = 0;
+        let tmp = allPaths(tmpMatrix, line, x + 1, y, value, level + 1, right, tmpAngleInfo);
+        matrices = matrices.concat(tmp);
+    } else
+        end = true;
+
+    if (right || !RIGHT_CONSTRAINT)
+        if (matrix.isValidPoint(x, y + 1) && matrix[x][y + 1] == 0) {
+            let tmpMatrix = matrix.clone();
+            tmpMatrix[x][y + 1] = [value];
+            let tmpAngleInfo = angleInfo.clone();
+            tmpAngleInfo.previousPreviousDirection = tmpAngleInfo.previousDirection;
+            tmpAngleInfo.previousDirection = tmpAngleInfo.direction;
+            tmpAngleInfo.direction = 2;
+            if (tmpAngleInfo.direction != angleInfo.direction)
+                tmpAngleInfo.turned++;
+            else
+                tmpAngleInfo.turned = 0;
+            let tmp = allPaths(tmpMatrix, line, x, y + 1, value, level + 1, right, tmpAngleInfo);
+            matrices = matrices.concat(tmp);
+        } else
+            end = true;
+
+    if (matrix.isValidPoint(x - 1, y) && matrix[x - 1][y] == 0) {
+        let tmpMatrix = matrix.clone();
+        tmpMatrix[x - 1][y] = [value]; //[value+' '+level];
+        let tmpAngleInfo = angleInfo.clone();
+        tmpAngleInfo.previousPreviousDirection = tmpAngleInfo.previousDirection;
+        tmpAngleInfo.previousDirection = tmpAngleInfo.direction;
+        tmpAngleInfo.direction = 3;
+        if (tmpAngleInfo.direction != angleInfo.direction)
+            tmpAngleInfo.turned++;
+        else
+            tmpAngleInfo.turned = 0;
+        let tmp = allPaths(tmpMatrix, line, x - 1, y, value, level + 1, right, tmpAngleInfo);
+        matrices = matrices.concat(tmp);
+    } else
+        end = true;
+
+
+    if (!right || !RIGHT_CONSTRAINT)
+        if (matrix.isValidPoint(x, y - 1) && matrix[x][y - 1] == 0) {
+            let tmpMatrix = matrix.clone();
+            tmpMatrix[x][y - 1] = [value];
+            let tmpAngleInfo = angleInfo.clone();
+            tmpAngleInfo.previousPreviousDirection = tmpAngleInfo.previousDirection;
+            tmpAngleInfo.previousDirection = tmpAngleInfo.direction;
+            tmpAngleInfo.direction = 4;
+            if (tmpAngleInfo.direction != angleInfo.direction)
+                tmpAngleInfo.turned++;
+            else
+                tmpAngleInfo.turned = 0;
+            let tmp = allPaths(tmpMatrix, line, x, y - 1, value, level + 1, right, tmpAngleInfo);
+            matrices = matrices.concat(tmp);
+        } else
+            end = true;
+
+        /*if(end && validateLine(matrix, line[value-1], value))
+            matrices.push(matrix);*/
+
+
+    return matrices;
+}
+
+function randomMatrices(model, lines) {
+    "use strict";
+    let solutions = Array.newWithElement(1000, []);
+    return solutions
+        .map((value) => {
+            return randomMatrix(model, lines);
+        })
+        .filter((matrix) => {
+            //return true;
+            return validateLines(matrix, lines);
+        });
+}
+
+function randomMatrix(matrix, lines) {
+    "use strict";
+    return matrix
+        .map((value, pos) => {
+            return value
+                .map((value2, pos2) => {
+                    if (value2 == -1)
+                        return value2;
+                    return valuesForPoint(matrix, pos, pos2, lines);
+                });
+        });
+}
+
+function valuesForPoint(matrix, x, y, lines) {
+    "use strict";
+    let points = lines
+        .map((line, pos) => {
+            return {
+                "pos": pos,
+                "line": line
+            };
+        })
+        .filter(line => inStartEnd(line.line, x, y))
+        .map(line => line.pos + 1);
+    //if there is at leas one start/end no other points
+    if (points.length)
+        return points;
+    points = Array.newWithElement(Math.randBounds(0, lines.length), []);
+    points = points
+        .map(point => Math.randBounds(1, lines.length))
+        .filter((elem, pos, arr) => arr.indexOf(elem) == pos); //uinique
+    if (points.length == 0)
+        return 0;
+    return points;
+}
+
+function validateLines(matrix, lines) {
+    "use strict";
+    for (let i = 0; i < lines.length; i++)
+        if (!validateLine(matrix, lines[i], i + 1))
+            return false;
+    return true;
+}
+
+function validateLine(matrix, line, name) {
+    "use strict";
+    if (!matrix.search(line[0][0], line[0][1], name) || !matrix.search(line[1][0], line[1][1], name))
+        return false;
+
+    for (let valueIndex = 0; valueIndex < matrix.length; valueIndex++) {
+        let value = matrix[valueIndex];
+        for (let value2Index = 0; value2Index < value.length; value2Index++) {
+            let value2 = value[value2Index];
+            let count = validPoint(matrix, valueIndex, value2Index, name);
+            let found = matrix.search(valueIndex, value2Index, name);
+            //console.log(valueIndex, value2Index, value2, found, isValidPoint(matrix, valueIndex, value2Index, name),
+            //    (valueIndex == line[0][0] && value2Index == line[0][1]),(valueIndex == line[1][0] && value2Index == line[1][1]));
+            if (found) {
+                //TODO check that end or start has count == 1
+                //end or start
+                if (inStartEnd(line, valueIndex, value2Index)) {
+                    if (count < 1) //this can cause more than one enter point in the start/end
+                        return false;
+                } else if (count <= 1)
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
+// point with a previous and following point
+function validPoint(matrix, x, y, value) {
+    "use strict";
+    let count = 0;
+    if (matrix.search(x - 1, y, value))
+        count++;
+    if (matrix.search(x + 1, y, value))
+        count++;
+    if (matrix.search(x, y - 1, value))
+        count++;
+    if (matrix.search(x, y + 1, value))
+        count++;
+    return count;
+}
+
+function inStartEnd(line, x, y) {
+    "use strict";
+    return (x == line[0][0] && y == line[0][1]) ||
+        (x == line[1][0] && y == line[1][1]);
+}
