@@ -143,28 +143,36 @@ function drawArrows(cx, m, p, l, sq_dim) {
   for (i = 0; i < m.length; i++) {
     for (j = 0; j < m[i].length; j++) {
       if (m[i][j] == -1) {
-          cx.fillRect(j * sq_dim, i * sq_dim, sq_dim, sq_dim);
+        // Draw component
+        cx.fillRect(j * sq_dim, i * sq_dim, sq_dim, sq_dim);
       }
       else if (typeof(m[i][j]) == "object") {
+        // We found an array that describes a segment of one or more lines
         for (t = 0; t < m[i][j].length; t++) {
           if (m[i][j][t] > 0) {
             moved = false;
             cx.beginPath();
+            // We look for neighbors of this cell
             for (k = 0; k < 4; k++) {
               ii = i + neighbors[k][0];
               jj = j + neighbors[k][1];
               if (m[ii] !== undefined && m[ii][jj] !== undefined) {
+                // A line can be either continued to a neighbor cell or connected to a component
                 if (isNeighborAConnectedComponent(m, p, l, ii, jj, i, j, t) || 
                     isLineContinued(m, ii, jj, i, j, t)) {
                   if (!moved) {
+                    // Start point in this cell
                     tmp_x = j * sq_dim + n_formula[k][0]
                     tmp_y = i * sq_dim + n_formula[k][1]
                     cx.moveTo(tmp_x , tmp_y);
                     moved = true;
                   } else {
+                    // End point in this cell
                     tmp_xx = j * sq_dim + n_formula[k][0]
                     tmp_yy = i * sq_dim + n_formula[k][1]
                     if ((tmp_x !== tmp_xx) && (tmp_y !== tmp_yy)) {
+                      // The line will be diagonal 
+                      // Draw a 90° corner to connect start and end point
                       if (k == 1) {
                         cx.lineTo(tmp_x, tmp_yy);      
                       }
