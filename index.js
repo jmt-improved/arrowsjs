@@ -56,7 +56,19 @@ var matrixDemo3 = [
     [[2],[2],[2],[2]],
 ];
 
-function drawArrows(cx, m, l, sq_dim) {
+function isNeighborAConnectedComponent(m, p, l, ii, jj, i, j, t) {
+  "use strict";
+  return ((m[ii][jj] == -1) && (l[m[i][j][t] - 1][0].equals([ii, jj])) || 
+                    l[m[i][j][t] - 1][1].equals([ii, jj]))
+} 
+
+function isLineContinued(m, ii, jj, i, j, t) {
+  "use strict";
+  return (typeof(m[ii][jj]) == "object" && 
+                    (m[ii][jj].indexOf(m[i][j][t]) != -1))
+}
+
+function drawArrows(cx, m, p, l, sq_dim) {
   "use strict";
   var neighbors = [[-1, 0], // TOP
                    [0, -1], // LEFT
@@ -82,10 +94,8 @@ function drawArrows(cx, m, l, sq_dim) {
               ii = i + neighbors[k][0];
               jj = j + neighbors[k][1];
               if (m[ii] !== undefined && m[ii][jj] !== undefined) {
-                if (((m[ii][jj] == -1) && (l[m[i][j][t] - 1][0].equals([i, j])) || 
-                    l[m[i][j][t] - 1][1].equals([i, j])) || 
-                   (typeof(m[ii][jj]) == "object" && 
-                    (m[ii][jj].indexOf(m[i][j][t]) != -1))) {
+                if (isNeighborAConnectedComponent(m, p, l, ii, jj, i, j, t) || 
+                    isLineContinued(m, ii, jj, i, j, t)) {
                   if (!moved) {
                     tmp_x = j * sq_dim + n_formula[k][0]
                     tmp_y = i * sq_dim + n_formula[k][1]
