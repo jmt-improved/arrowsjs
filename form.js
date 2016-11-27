@@ -1,3 +1,34 @@
+var sampleComponents = [
+    [0, 0],
+    [0, 1],
+    [0, 3],
+    [1, 0],
+    [1, 1],
+    [1, 3]
+];
+
+var sampleLines = [
+    [
+        [0, 4],
+        [2, 0]
+    ],
+    [
+        [2, 3],
+        [2, 1]
+    ]
+];
+
+var sampleLinks = [
+    [
+        [0, 3],
+        [1, 0]
+    ],
+    [
+        [1, 3],
+        [1, 1]
+    ],
+];
+
 var nComponents = 0;
 var nLines = 0;
 var nConnections = 0;
@@ -82,8 +113,8 @@ function buildConnections(shape) {
     return connections;
 }
 
-
 $("document").ready(function() {
+    var i, j;
     var addComponentA = $("#addComponent");
     addComponentA.click(function() {
         $(format(compRowElem, ++nComponents)).insertBefore(addComponentA);
@@ -99,17 +130,39 @@ $("document").ready(function() {
         $(format(connRowElem, ++nConnections)).insertBefore(addConnectionA);
     });
 
+    for (i = 0; i < sampleComponents.length; i++) {
+        addComponentA.trigger("click");
+        $(format("#c{0}x", i + 1)).val(sampleComponents[i][1]);
+        $(format("#c{0}y", i + 1)).val(sampleComponents[i][0]);
+    }
+
+    for (i = 0; i < sampleLines.length; i++) {
+        addLineA.trigger("click");
+        $(format("#l{0}sx", i + 1)).val(sampleLines[i][0][1]);
+        $(format("#l{0}sy", i + 1)).val(sampleLines[i][0][0]);
+        $(format("#l{0}ex", i + 1)).val(sampleLines[i][1][1]);
+        $(format("#l{0}ey", i + 1)).val(sampleLines[i][1][0]);
+    }
+
+    for (i = 0; i < sampleLinks.length; i++) {
+        addConnectionA.trigger("click");
+        $(format("#conn{0}sx", i + 1)).val(sampleLinks[i][0][1]);
+        $(format("#conn{0}sy", i + 1)).val(sampleLinks[i][0][0]);
+        $(format("#conn{0}ex", i + 1)).val(sampleLinks[i][1][1]);
+        $(format("#conn{0}ey", i + 1)).val(sampleLinks[i][1][0]);
+    }
+
     $("#draw").click(function() {
         var dim = parseInt($("#sqd").val(), 10);
         var matrixShape = [parseInt($("#mh").val(), 10), parseInt($("#mw").val(), 10)];
         var matrix = buildMatrix(matrixShape);
         var linesShape = [nLines, 2];
-        var lines = buildLines(linesShape);
+        var linesMatrix = buildLines(linesShape);
         var connectionsShape = [nConnections, 2];
-        var connections = buildConnections(connectionsShape)
+        var connectionsMatrix = buildConnections(connectionsShape)
 
         var t0 = new Date().getTime();
-        var solved = bestMatrix(matrix, lines);
+        var solved = bestMatrix(matrix, linesMatrix);
         var t1 = new Date().getTime();
         console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
 
@@ -119,6 +172,6 @@ $("document").ready(function() {
         ctx.lineWidth = 1;
         ctx.fillStyle = "red";
         ctx.strokeStyle = 'black';
-        drawArrows(ctx, solved, lines, connections, dim);
+        drawArrows(ctx, solved, linesMatrix, connectionsMatrix, dim);
     });
 });
