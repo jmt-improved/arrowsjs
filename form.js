@@ -1,3 +1,5 @@
+//TEST1
+/*
 var sampleComponents = [
     [1, 0],
     [0, 2],
@@ -45,7 +47,9 @@ var sampleLinks = [
         [1, 1]
     ],
 ];
-/*
+*/
+//DEFAULT TEST
+
 var sampleComponents = [
     [0, 0],
     [0, 1],
@@ -76,7 +80,7 @@ var sampleLinks = [
         [1, 1]
     ],
 ];
-*/
+
 var nComponents = 0;
 var nLines = 0;
 var nConnections = 0;
